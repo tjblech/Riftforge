@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no" />
+  <meta name="theme-color" content="#10151b" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Riftforge" />
+  <title>Riftforge</title>
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="icon" href="icons/icon-192.png" />
+  <link rel="apple-touch-icon" href="icons/icon-192.png" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main id="app">
+    <canvas id="game" aria-label="Riftforge game canvas"></canvas>
+
+    <section id="hud" class="hud hidden" aria-hidden="true">
+      <div class="hud-top">
+        <div class="portrait-wrap">
+          <div id="classIcon" class="class-icon">⚔</div>
+          <div class="level-badge">Lv <span id="levelText">1</span></div>
+        </div>
+        <div class="bars">
+          <div class="bar hp"><i id="hpFill"></i><span id="hpText">100 / 100</span></div>
+          <div class="bar xp"><i id="xpFill"></i><span id="xpText">0 / 25 XP</span></div>
+        </div>
+        <div class="currency-stack">
+          <button id="goldBtn" class="pill" type="button">◈ <span id="goldText">0</span></button>
+          <div class="pill muted">✦ <span id="shardText">0</span></div>
+        </div>
+      </div>
+
+      <div class="zone-card">
+        <strong id="zoneText">Ashen Meadow</strong>
+        <span id="objectiveText">0 / 20 enemies</span>
+      </div>
+
+      <button id="menuBtn" class="round-btn menu-btn" type="button" aria-label="Open character menu">☰</button>
+      <button id="potionBtn" class="round-btn potion-btn" type="button" aria-label="Use potion">
+        <span>♥</span><small id="potionText">3</small>
+      </button>
+      <button id="dashBtn" class="round-btn dash-btn" type="button" aria-label="Dash">➤<small id="dashText">DASH</small></button>
+      <button id="skillBtn" class="round-btn skill-btn" type="button" aria-label="Special skill">✦<small id="skillText">SKILL</small></button>
+
+      <div id="joystick" class="joystick" aria-hidden="true"><div id="stick" class="stick"></div></div>
+      <div id="toast" class="toast"></div>
+    </section>
+
+    <section id="titleScreen" class="screen title-screen">
+      <div class="logo-mark">R</div>
+      <h1>RIFTFORGE</h1>
+      <p>Hack. Loot. Evolve.</p>
+      <div class="title-actions">
+        <button id="continueBtn" class="primary hidden" type="button">CONTINUE</button>
+        <button id="newGameBtn" class="primary" type="button">NEW HERO</button>
+        <button id="installBtn" class="secondary hidden" type="button">INSTALL APP</button>
+      </div>
+      <small class="title-foot">Original mobile action-RPG prototype · saves on this device</small>
+    </section>
+
+    <section id="classScreen" class="screen panel-screen hidden">
+      <div class="panel wide">
+        <div class="eyebrow">CHOOSE YOUR PATH</div>
+        <h2>What kind of hero are you?</h2>
+        <p class="sub">Each class has a different basic attack and signature skill.</p>
+        <div class="class-grid">
+          <button class="class-card" data-class="bladesworn" type="button">
+            <span class="class-glyph">⚔</span><strong>Bladesworn</strong><small>Close-range cleaves · toughest</small>
+            <em>Skill: Whirlwind</em>
+          </button>
+          <button class="class-card" data-class="ranger" type="button">
+            <span class="class-glyph">➶</span><strong>Ranger</strong><small>Fast arrows · crit focused</small>
+            <em>Skill: Volley</em>
+          </button>
+          <button class="class-card" data-class="arcanist" type="button">
+            <span class="class-glyph">✦</span><strong>Arcanist</strong><small>Homing bolts · high burst</small>
+            <em>Skill: Nova</em>
+          </button>
+        </div>
+        <button id="classBackBtn" class="text-btn" type="button">Back</button>
+      </div>
+    </section>
+
+    <section id="levelScreen" class="screen overlay hidden">
+      <div class="panel">
+        <div class="eyebrow">LEVEL UP</div>
+        <h2>Choose an upgrade</h2>
+        <div id="perkChoices" class="choice-list"></div>
+      </div>
+    </section>
+
+    <section id="lootScreen" class="screen overlay hidden">
+      <div class="panel">
+        <div class="eyebrow gold">BOSS CACHE</div>
+        <h2>Choose your loot</h2>
+        <p class="sub">The other two items are salvaged for gold.</p>
+        <div id="lootChoices" class="choice-list"></div>
+      </div>
+    </section>
+
+    <section id="menuScreen" class="screen overlay hidden">
+      <div class="panel menu-panel">
+        <div class="panel-head">
+          <div><div class="eyebrow">HERO</div><h2 id="heroName">Bladesworn</h2></div>
+          <button id="closeMenuBtn" class="close-btn" type="button">×</button>
+        </div>
+        <div class="tabs">
+          <button class="tab active" data-tab="stats" type="button">Stats</button>
+          <button class="tab" data-tab="gear" type="button">Gear</button>
+          <button class="tab" data-tab="mastery" type="button">Mastery</button>
+        </div>
+        <div id="tabStats" class="tab-content active"></div>
+        <div id="tabGear" class="tab-content"></div>
+        <div id="tabMastery" class="tab-content"></div>
+      </div>
+    </section>
+
+    <section id="deathScreen" class="screen overlay hidden">
+      <div class="panel death-panel">
+        <div class="skull">☠</div>
+        <div class="eyebrow danger">FALLEN</div>
+        <h2>The rift pushes back.</h2>
+        <p id="deathSummary" class="sub"></p>
+        <button id="reviveBtn" class="primary" type="button">RETURN TO CAMP</button>
+        <button id="deathMenuBtn" class="secondary" type="button">TITLE SCREEN</button>
+      </div>
+    </section>
+  </main>
+  <script src="game.js"></script>
+</body>
+</html>
